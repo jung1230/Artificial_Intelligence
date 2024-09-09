@@ -189,7 +189,7 @@ def get_args_parser():
                         help='Enabling distributed evaluation')
     parser.add_argument('--disable_eval', type=str2bool, default=False,
                         help='Disabling evaluation during training')
-    parser.add_argument('--num_workers', default=10, type=int)
+    parser.add_argument('--num_workers', default=1, type=int)
     parser.add_argument('--pin_mem', type=str2bool, default=True,
                         help='Pin CPU memory in DataLoader for more efficient (sometimes) transfer to GPU.')
 
@@ -371,7 +371,7 @@ def main(args):
 
     if args.distributed:
         model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.gpu], find_unused_parameters=False)
-        model_without_ddp = model.module
+        model_without_ddp = model
 
     optimizer = create_optimizer(
         args, model_without_ddp, skip_list=None,
@@ -444,13 +444,13 @@ def main(args):
             log_writer.set_step(epoch * num_training_steps_per_epoch * args.update_freq)
         if wandb_logger:
             wandb_logger.set_steps()
-        if 'VanillaNet' == model.module.__class__. __name__ and epoch <= args.decay_epochs:
+        if 'VanillaNet' == model.__class__. __name__ and epoch <= args.decay_epochs:
             if args.decay_linear:
                 act_learn = epoch / args.decay_epochs * 1.0
             else:
                 act_learn = 0.5 * (1 - math.cos(math.pi * epoch / args.decay_epochs)) * 1.0
             print(f"VanillaNet decay_linear: {args.decay_linear}, act_learn weight: {act_learn:.3f}")
-            model.module.change_act(act_learn)
+            model.change_act(act_learn)
         train_stats = train_one_epoch(
             model, criterion, data_loader_train, optimizer,
             device, epoch, loss_scaler, args.clip_grad, model_ema, mixup_fn,

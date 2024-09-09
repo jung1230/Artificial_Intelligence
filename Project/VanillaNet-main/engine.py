@@ -78,9 +78,9 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
                         iter_model_ema.update(model)
                         for i in range(len(iter_model_ema.ema.stages)):
                             if hasattr(iter_model_ema.ema.stages[i], 'act_learn'):
-                                iter_model_ema.ema.stages[i].act_learn = model.module.stages[i].act_learn
+                                iter_model_ema.ema.stages[i].act_learn = model.stages[i].act_learn
                             if hasattr(iter_model_ema.ema, 'act_learn'):
-                                iter_model_ema.ema.act_learn = model.module.act_learn
+                                iter_model_ema.ema.act_learn = model.act_learn
         else: # full precision
             loss /= update_freq
             loss.backward()
@@ -92,9 +92,9 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
                         iter_model_ema.update(model)
                         for i in range(len(iter_model_ema.ema.stages)):
                             if hasattr(iter_model_ema.ema.stages[i], 'act_learn'):
-                                iter_model_ema.ema.stages[i].act_learn = model.module.stages[i].act_learn
+                                iter_model_ema.ema.stages[i].act_learn = model.stages[i].act_learn
                             if hasattr(iter_model_ema.ema, 'act_learn'):
-                                iter_model_ema.ema.act_learn = model.module.act_learn
+                                iter_model_ema.ema.act_learn = model.act_learn
 
         torch.cuda.synchronize()
 
