@@ -2,4 +2,5 @@ imagenet/
 Needed Package/
 tiny-imagenet-200Class-500Data/
 tiny-imagenet-20Class-50Data/
+cleaned_dataset/
 *.zip
